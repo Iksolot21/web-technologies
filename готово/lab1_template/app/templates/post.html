@@ -1,0 +1,100 @@
+{# templates/post.html #}
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <img class="card-img-top" src="{{ url_for('static', filename='images/' + post.image_id) }}" alt="{{ post.title }}">
+                <div class="card-body">
+                    <h2 class="card-title">{{ post.title }}</h2>
+                    <p class="card-text">{{ post.text }}</p>
+                </div>
+                <div class="card-footer text-muted">
+                    Опубликовано {{ post.date.strftime('%d.%m.%Y') }}.
+                    Автор: {{ post.author }}
+                </div>
+            </div>
+
+            <div class="card my-4">
+                <h5 class="card-header">Оставьте комментарий:</h5>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="form-group">
+                            <textarea class="form-control" name="comment" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Отправить</button>
+                    </form>
+                </div>
+            </div>
+
+            {% macro display_comment(comment, level=0) %}
+                <div class="media mt-{{ 4 + level * 2 }} comment-level-{{ level }}">
+                    <img class="d-flex mr-3 rounded-circle avatar" src="{{ url_for('static', filename='images/' + comment.avatar) }}" alt="Аватар">
+                    <div class="media-body">
+                        <h5 class="mt-0">{{ comment.author }}</h5>
+                        {{ comment.text }}
+                        {% if comment.replies %}
+                            {% for reply in comment.replies %}
+                                {{ display_comment(reply, level + 1) }}
+                            {% endfor %}
+                        {% endif %}
+                        {#  Удалена кнопка "Ответить" #}
+                    </div>
+                </div>
+            {% endmacro %}
+
+            {% for comment in comments %}
+                {{ display_comment(comment) }}
+            {% endfor %}
+
+        </div>
+
+        <div class="col-md-4">
+            <div class="card my-4">
+                <h5 class="card-header">Поиск</h5>
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Поиск...">
+                        <span class="input-group-btn">
+                            <button class="btn btn-secondary" type="button">Найти!</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card my-4">
+                <h5 class="card-header">Категории</h5>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <ul class="list-unstyled mb-0">
+                                <li><a href="#">Веб-разработка</a></li>
+                                <li><a href="#">Python</a></li>
+                                <li><a href="#">Дизайн</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-6">
+                            <ul class="list-unstyled mb-0">
+                                <li><a href="#">JavaScript</a></li>
+                                <li><a href="#">SQL</a></li>
+                                <li><a href="#">Другое</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card my-4">
+                <h5 class="card-header">Side Widget</h5>
+                <div class="card-body">
+                    Вы можете добавить полезные виджеты в сайдбар!
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

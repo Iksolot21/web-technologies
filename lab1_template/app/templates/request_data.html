@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Данные запроса</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Данные запроса</h1>
+
+        <h2>Параметры URL:</h2>
+        {% if url_params %}
+            <ul>
+                {% for key, value in url_params.items() %}
+                    <li><strong>{{ key }}:</strong> {{ value }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Нет параметров URL.</p>
+        {% endif %}
+
+        <h2>Заголовки запроса:</h2>
+        <ul>
+            {% for key, value in headers.items() %}
+                <li><strong>{{ key }}:</strong> {{ value }}</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Cookie:</h2>
+        {% if cookies %}
+            <ul>
+                {% for key, value in cookies.items() %}
+                    <li><strong>{{ key }}:</strong> {{ value }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Нет cookie.</p>
+        {% endif %}
+
+        <h2>Параметры формы:</h2>
+        {% if form_params %}
+            <ul>
+                {% for key, value in form_params.items() %}
+                    <li><strong>{{ key }}:</strong> {{ value }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Нет параметров формы.</p>
+        {% endif %}
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
