@@ -12,9 +12,9 @@ body {
     border-radius: 50%;
 }
 
-.about .avatar { /*  Добавляем селектор для страницы "Об авторе" */
-    width: 150px; /*  Увеличиваем ширину */
-    height: 150px; /*  Увеличиваем высоту */
+.about .avatar { 
+    width: 150px; 
+    height: 150px; 
 }
 
 .media {
@@ -35,12 +35,10 @@ body {
 
 
 /* Стили для иерархии комментариев */
-/*  Увеличиваем отступ сверху для каждого уровня вложенности */
 .mt-5 { margin-top: 3rem !important; }
 .mt-6 { margin-top: 3.5rem !important; }
 .mt-7 { margin-top: 4rem !important; }
 
-/* Увеличиваем левый отступ для каждого уровня вложенности */
 .comment-level-0 { margin-left: 0px; }
 .comment-level-1 { margin-left: 20px; }
 .comment-level-2 { margin-left: 40px; }
