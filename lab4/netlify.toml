@@ -1,5 +1,5 @@
 [build]
-  command = waitress-serve --listen=0.0.0.0:8080 app:application"
+  command = "pip install -r requirements.txt && waitress-serve --listen=0.0.0.0:8080 app:application"
   publish = "app/static"
   environment = { PYTHON_VERSION = "3.12" }
 
