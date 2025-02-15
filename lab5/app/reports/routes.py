@@ -4,7 +4,7 @@ import pandas as pd
 from flask_login import login_required, current_user
 from functools import wraps
 from math import ceil
-from io import StringIO
+from io import StringIO, BytesIO
 import csv
 
 reports_bp = Blueprint('reports', __name__, template_folder='templates')
@@ -92,35 +92,43 @@ from sqlalchemy import func
 @check_rights(['admin'])
 def reports_users_csv():
     """Экспорт отчета по пользователям в CSV"""
-
     try:
         data = db.session.query(
-        func.concat(User.last_name, ' ', User.first_name, ' ', func.coalesce(User.middle_name, '')),
-        func.count(VisitLog.id)
+            func.concat(User.last_name, ' ', User.first_name, ' ', func.coalesce(User.middle_name, '')),
+            func.count(VisitLog.id)
         ).outerjoin(VisitLog, User.id == VisitLog.user_id) \
          .group_by(User.id) \
          .all()
 
-        print(data) # Добавьте это
         if not data:
             flash("Нет данных для экспорта в CSV.", "info")
             return redirect(url_for('reports.reports_users'))
 
+        # Используем StringIO для текстовых данных
         csv_buffer = StringIO()
-        csv_writer = csv.writer(csv_buffer, quoting=csv.QUOTE_MINIMAL) 
+        csv_writer = csv.writer(csv_buffer, quoting=csv.QUOTE_MINIMAL)
 
-        csv_writer.writerow(['Пользователь', 'Количество посещений'])
+        # Записываем заголовки
+        headers = ['Пользователь', 'Количество посещений']
+        csv_writer.writerow(headers)
 
+        # Записываем данные
         for row in data:
             csv_writer.writerow(row)
 
-        response = send_file(
-            csv_buffer.getvalue().encode('utf-8'),
-            mimetype='text/csv',
+        # Перемещаем данные в BytesIO
+        output = BytesIO()
+        output.write(csv_buffer.getvalue().encode('utf-8-sig'))  # Добавляем BOM для корректного отображения
+        output.seek(0)
+
+
+        # Отправляем файл
+        return send_file(
+            output,
+            mimetype="text/csv",
             as_attachment=True,
-            download_name='reports_users.csv'
+            download_name="reports_users.csv"
         )
-        return response
 
     except Exception as e:
         flash(f"Ошибка при формировании CSV: {e}", "error")
