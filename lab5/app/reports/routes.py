@@ -71,19 +71,35 @@ def reports_users():
 def reports_pages_csv():
     """Экспорт отчета по страницам в CSV"""
     try:
-        data = db.session.query(VisitLog.path, db.func.count(VisitLog.id)).group_by(VisitLog.path).all()
+        # Запрос данных
+        data = db.session.query(
+            VisitLog.path, 
+            db.func.count(VisitLog.id)
+        ).group_by(VisitLog.path).all()
+
+        if not data:
+            flash("Нет данных для экспорта в CSV.", "info")
+            return redirect(url_for('reports.reports_pages'))
+
+        # Создаем DataFrame
         df = pd.DataFrame(data, columns=['Страница', 'Количество посещений'])
-        csv_file = df.to_csv(index=False, encoding='utf-8')
-        response = send_file(
-            csv_file.encode('utf-8'),
+
+        # Сохраняем CSV в BytesIO
+        output = BytesIO()
+        df.to_csv(output, index=False, encoding='utf-8-sig')
+        output.seek(0)
+
+        # Отправляем файл
+        return send_file(
+            output,
             mimetype='text/csv',
             as_attachment=True,
             download_name='reports_pages.csv'
         )
-        return response
+
     except Exception as e:
         flash(f"Ошибка при формировании CSV: {e}", "error")
-        return redirect(url_for('reports.reports_pages')) 
+        return redirect(url_for('reports.reports_pages'))
 
 from sqlalchemy import func
 
