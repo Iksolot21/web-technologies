@@ -37,3 +37,6 @@ def image(image_id):
     img = db.get_or_404(Image, image_id)
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                img.storage_filename)
+
+if __name__ == '__main__':
+    app.run(port=5001, debug=True) 
