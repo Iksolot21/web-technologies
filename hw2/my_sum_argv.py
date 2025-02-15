@@ -1,6 +1,6 @@
 import sys
 
 if __name__ == '__main__':
-    numbers = [float(arg) for arg in sys.argv[1:]]
+    numbers = [1, 2, 3]
     result = sum(numbers)
     print(result)

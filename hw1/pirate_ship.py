@@ -5,15 +5,12 @@ def pirate_ship():
         name, weight, value = input().split()
         weight, value = float(weight), float(value)
         if weight <= capacity:
-            # Calculate value per unit weight when creating the items list
             value_per_unit = value / weight
             items.append((name, weight, value, value_per_unit))
 
     if not items:
         print("")
         return
-
-    # Sort by value per unit weight (descending), then by original value (descending)
     items.sort(key=lambda x: (-x[3], -x[2]))
     
     loaded_items = []
@@ -21,11 +18,9 @@ def pirate_ship():
 
     for name, weight, value, value_per_unit in items:
         if current_weight + weight <= capacity:
-            # Take whole item
             loaded_items.append((name, weight, value))
             current_weight += weight
         else:
-            # Take fraction of item
             remaining_capacity = capacity - current_weight
             if remaining_capacity > 0:
                 partial_weight = remaining_capacity

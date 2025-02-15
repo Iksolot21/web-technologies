@@ -22,13 +22,11 @@ def process_list_gen(arr):
 if __name__ == '__main__':
     arr = [1, 2, 3, 4, 5]
     
-    # Сравнение скорости
     num = 10000
     time_original = timeit.timeit(lambda: process_list(arr), number=num)
     time_comprehension = timeit.timeit(lambda: process_list_comprehension(arr), number=num)
-    time_generator = timeit.timeit(lambda: list(process_list_gen(arr)), number=num) # Генератор нужно преобразовать в список для корректного измерения времени
+    time_generator = timeit.timeit(lambda: list(process_list_gen(arr)), number=num) 
     
     print(f"Исходная функция: {time_original}")
     print(f"List comprehension: {time_comprehension}")
     print(f"Функция-генератор: {time_generator}")
-    # List comprehension обычно быстрее, чем исходная функция и функция-генератор.

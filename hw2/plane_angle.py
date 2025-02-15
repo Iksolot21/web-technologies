@@ -26,18 +26,13 @@ def plane_angle(a, b, c, d):
     X = AB.cross(BC)
     Y = BC.cross(CD)
 
-    if X.absolute() == 0 or Y.absolute() == 0:
-        return 0.0  
+    X_abs = X.absolute()
+    Y_abs = Y.absolute()
 
-    cos_phi = X.dot(Y) / (X.absolute() * Y.absolute())
+    if X_abs == 0 or Y_abs == 0:
+        return 0.0
+
+    cos_phi = X.dot(Y) / (X_abs * Y_abs)
+    cos_phi = max(min(cos_phi, 1), -1)
     phi = math.acos(cos_phi)
     return math.degrees(phi)
-
-if __name__ == '__main__':
-    points = []
-    for i in range(4):
-        x, y, z = map(float, input().split())
-        points.append(Point(x, y, z))
-
-    a, b, c, d = points
-    print("%.2f" % plane_angle(a, b, c, d))

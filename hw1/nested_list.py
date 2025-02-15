@@ -1,5 +1,5 @@
 students = []
-n = int(input())  # Сохраняем количество студентов
+n = int(input())  
 for _ in range(n):
     name = input()
     score = float(input())
@@ -7,7 +7,7 @@ for _ in range(n):
 
 scores = sorted(list(set([score for name, score in students])))
 
-if len(scores) > 1:  # Проверяем, есть ли хотя бы две уникальные оценки
+if len(scores) > 1:  
     second_lowest = scores[1]
     second_lowest_students = [name for name, score in students if score == second_lowest]
     second_lowest_students.sort()
@@ -20,4 +20,4 @@ elif len(scores) == 1 and n > 1:
     for name in second_lowest_students:
         print(name)
 else:
-    pass # Ничего не выводим, если нет второй минимальной оценки
+    pass

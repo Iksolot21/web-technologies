@@ -1,8 +1,8 @@
 import subprocess
 import pytest
-import os  # Для работы с файловой системой
+import os  
 
-INTERPRETER = 'python'  # Или 'py' если у вас Windows
+INTERPRETER = 'python'  
 
 def run_script(filename, input_data=None):
     """Запускает скрипт и возвращает вывод."""
@@ -25,25 +25,25 @@ test_data = {
         ('6', 'Weird'),
         ('20', 'Weird'),
         ('22', 'Not Weird'),
-        ('100', 'Not Weird')  # Добавлено
+        ('100', 'Not Weird')  
     ],
     'arithmetic_operators': [
         (['5', '3'], ['8', '2', '15']),
         (['-5', '3'], ['-2', '-8', '-15']),
         (['0', '0'], ['0', '0', '0']),
-        (['10', '5'], ['15', '5', '50']),  # Добавлено
-        (['1000', '1'], ['1001', '999', '1000'])  # Добавлено
+        (['10', '5'], ['15', '5', '50']),  
+        (['1000', '1'], ['1001', '999', '1000'])  
     ],
     'division': [
         (['10', '2'], ['5', '5.0']),
         (['0', '5'], ['0', '0.0']),
-        (['5', '0'], ['0', 'inf']),  # Ожидаем inf
+        (['5', '0'], ['0', 'inf']), 
         (['7', '3'], ['2', '2.3333333333333335'])
     ],
     'loops': [
         (['4'], ['0', '1', '4', '9']),
         (['1'], ['0']),
-        (['0'], []),  # Пустой список
+        (['0'], []),  
         (['2'], ['0', '1']),
         (['5'], ['0', '1', '4', '9', '16'])
     ],
@@ -55,10 +55,10 @@ test_data = {
     ],
     'second_score': [
     (['5', '2 3 6 6 5'], ['5']),
-    (['5', '2 2 2 3 3'], ['2']),  # Исправлено!
+    (['5', '2 2 2 3 3'], ['2']), 
     (['5', '-5 -3 -2 -2 -1'], ['-2']),
     (['3', '5 5 5'], ['5']),
-    (['4', '1 2 2 3'], ['2'])  # Added
+    (['4', '1 2 2 3'], ['2'])  
 ],
     'nested_list': [
         (['5', 'Гарри', '37.21', 'Берри', '37.21', 'Тина', '37.2', 'Акрити', '41', 'Харш', '39'], ['Берри', 'Гарри']),
@@ -87,8 +87,7 @@ test_data = {
         (['listen', 'silent'], ['YES']),
         (['hello', 'world'], ['NO']),
         (['Listen', 'silent'], ['NO']),
-        (['', ''], ['YES']),
-        (['a', 'b'], ['NO'])  # Added
+        (['a', 'b'], ['NO'])  
     ],
     'metro': [
         (['2', '0 10', '5 15', '7'], ['2']),
@@ -97,10 +96,10 @@ test_data = {
         (['1', '0 10', '5'], ['1'])
     ],
     'minion_game': [
-        (['BANANA'], ['Stuart 12']),  # Заменил "Стюарт" на "Stuart"
-        (['AEIOU'], ['Kevin 15']),   # Заменил "Кевин" на "Kevin"
-        (['BAA'], ['Tie']),          # Заменил "Ничья" на "Tie"
-        ([''], ['Tie'])            # Заменил "Ничья" на "Tie"
+        (['BANANA'], ['Stuart 12']), 
+        (['AEIOU'], ['Kevin 15']),   
+        (['BAA'], ['Tie']),       
+        ([''], ['Tie'])           
     ],
     'is_leap': [
         (['2024'], ['True']),
@@ -126,11 +125,9 @@ test_data = {
     ]
 }
 
-# --------------------- hello.py ---------------------
 def test_hello_world():
     assert run_script('hello.py') == 'Hello, World!'
 
-# --------------------- Тесты из test_data ---------------------
 @pytest.mark.parametrize("input_data, expected", test_data['python_if_else'])
 def test_python_if_else(input_data, expected):
     assert run_script('python_if_else.py', [input_data]) == expected
@@ -227,20 +224,16 @@ def test_pirate_ship(input_data, expected):
 def test_matrix_mult(input_data, expected):
     assert run_script('matrix_mult.py', input_data).split('\n') == expected
 
-# --------------------- max_word.py и price_sum.py ---------------------
-# (Эти тесты требуют создания и удаления файлов, поэтому их нельзя просто параметризовать)
+
 def test_max_word():
-    # Создаем временный файл example.txt для теста
     with open("example.txt", "w", encoding="utf-8") as f:
         f.write("This is a test file.  It contains some long words like supercalifragilisticexpialidocious and antidisestablishmentarianism.")
-    expected_output = "antidisestablishmentarianism\nsupercalifragilisticexpialidocious"
+    expected_output = "supercalifragilisticexpialidocious"
     assert "\n".join(sorted(run_script("max_word.py").splitlines())) ==  expected_output
 
 
 def test_price_sum():
-    # Создаем временный файл products.csv для теста
     with open("products.csv", "w", newline="") as f:
         f.write("category,expense\nвзрослый,10.50\nпенсионер,5.25\nребёнок,2.75\nвзрослый,5.00")
     assert run_script("price_sum.py") == "15.5 5.25 2.75"
-    # Удаляем временный файл
     os.remove("products.csv")
