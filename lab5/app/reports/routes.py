@@ -48,7 +48,7 @@ def reports_pages():
         .group_by(VisitLog.path)\
         .order_by(db.func.count(VisitLog.id).desc())\
         .paginate(page=page, per_page=PER_PAGE, error_out=False)
-    return render_template('reports/reports_pages.html', pages=pages, page=page, title='Отчет по страницам')
+    return render_template('reports/reports_pages.html', pages=pages, page=page, title='Отчет по страницам', pagination=pages)
 
 @reports_bp.route('/users')
 @login_required
@@ -68,18 +68,20 @@ def reports_users():
 @check_rights(['admin'])
 def reports_pages_csv():
     """Экспорт отчета по страницам в CSV"""
-
-    data = db.session.query(VisitLog.path, db.func.count(VisitLog.id)).group_by(VisitLog.path).all()
-    df = pd.DataFrame(data, columns=['Страница', 'Количество посещений'])
-
-    csv_file = df.to_csv(index=False, encoding='utf-8')
-    response = send_file(
-        csv_file.encode('utf-8'),
-        mimetype='text/csv',
-        as_attachment=True,
-        download_name='reports_pages.csv'
-    )
-    return response
+    try:
+        data = db.session.query(VisitLog.path, db.func.count(VisitLog.id)).group_by(VisitLog.path).all()
+        df = pd.DataFrame(data, columns=['Страница', 'Количество посещений'])
+        csv_file = df.to_csv(index=False, encoding='utf-8')
+        response = send_file(
+            csv_file.encode('utf-8'),
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='reports_pages.csv'
+        )
+        return response
+    except Exception as e:
+        flash(f"Ошибка при формировании CSV: {e}", "error")
+        return redirect(url_for('reports.reports_pages')) 
 
 @reports_bp.route('/users/csv')
 @login_required
