@@ -7,8 +7,12 @@ from reports.routes import reports_bp
 import os
 from datetime import datetime
 from functools import wraps
+import logging
 
 app = Flask(__name__)
+app.debug = True  # <--- Добавьте эту строку
+logging.basicConfig(level=logging.DEBUG)  # Включаем логирование на уровне DEBUG
+logger = logging.getLogger(__name__)
 app.config['SECRET_KEY'] = os.urandom(24) 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:16745678@127.0.0.1/user_management'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

@@ -7,6 +7,7 @@ import os
 from datetime import datetime
 
 app = Flask(__name__)
+application = app
 app.config['SECRET_KEY'] = os.urandom(24) 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:16745678@127.0.0.1/user_management'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
