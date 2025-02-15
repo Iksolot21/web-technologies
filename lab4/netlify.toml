@@ -1,8 +1,5 @@
 [build]
   command = "pip install -r requirements.txt && waitress-serve --listen=0.0.0.0:8080 app.app:app"
-  environment = { 
-    PYTHON_VERSION = "3.12",
-   }
 
 [dev]
   framework = "#custom"
