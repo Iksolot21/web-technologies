@@ -1,5 +1,5 @@
 [build]
-  command = "pip install --index-url https://download.pytorch.org/whl/cu118 -r requirements.txt && gunicorn --bind 0.0.0.0:8080 app:app"
+  command = "pip install --index-url https://download.pytorch.org/whl/cu118 -r requirements.txt && gunicorn --bind 0.0.0.0:8080 app:application" 
   publish = "app/static"
   environment = { PYTHON_VERSION = "3.12" }
 
