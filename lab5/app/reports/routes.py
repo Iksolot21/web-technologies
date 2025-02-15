@@ -4,6 +4,8 @@ import pandas as pd
 from flask_login import login_required, current_user
 from functools import wraps
 from math import ceil
+from io import StringIO
+import csv
 
 reports_bp = Blueprint('reports', __name__, template_folder='templates')
 
@@ -83,24 +85,43 @@ def reports_pages_csv():
         flash(f"Ошибка при формировании CSV: {e}", "error")
         return redirect(url_for('reports.reports_pages')) 
 
+from sqlalchemy import func
+
 @reports_bp.route('/users/csv')
 @login_required
 @check_rights(['admin'])
 def reports_users_csv():
     """Экспорт отчета по пользователям в CSV"""
 
-    data = db.session.query(User.first_name, db.func.count(VisitLog.id))\
-        .outerjoin(VisitLog, User.id == VisitLog.user_id)\
-        .group_by(User.id)\
-        .all()
-    df = pd.DataFrame(data, columns=['Пользователь', 'Количество посещений'])
+    try:
+        data = db.session.query(
+        func.concat(User.last_name, ' ', User.first_name, ' ', func.coalesce(User.middle_name, '')),
+        func.count(VisitLog.id)
+        ).outerjoin(VisitLog, User.id == VisitLog.user_id) \
+         .group_by(User.id) \
+         .all()
 
+        print(data) # Добавьте это
+        if not data:
+            flash("Нет данных для экспорта в CSV.", "info")
+            return redirect(url_for('reports.reports_users'))
 
-    csv_file = df.to_csv(index=False, encoding='utf-8')
-    response = send_file(
-        csv_file.encode('utf-8'),
-        mimetype='text/csv',
-        as_attachment=True,
-        download_name='reports_users.csv'
-    )
-    return response
+        csv_buffer = StringIO()
+        csv_writer = csv.writer(csv_buffer, quoting=csv.QUOTE_MINIMAL) 
+
+        csv_writer.writerow(['Пользователь', 'Количество посещений'])
+
+        for row in data:
+            csv_writer.writerow(row)
+
+        response = send_file(
+            csv_buffer.getvalue().encode('utf-8'),
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name='reports_users.csv'
+        )
+        return response
+
+    except Exception as e:
+        flash(f"Ошибка при формировании CSV: {e}", "error")
+        return redirect(url_for('reports.reports_users'))
