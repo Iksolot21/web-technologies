@@ -1,6 +1,4 @@
-{# templates/user_create.html #}
 {% extends 'base.html' %}
-{% import "_user_form.html" as user_form %}
 
 {% block content %}
     <h1>Создание пользователя</h1>
@@ -31,6 +29,54 @@
             {% endif %}
         </div>
 
-            {{ user_form.render_user_form(form, title) }}
+        <div class="mb-3">
+            {{ form.first_name.label(class="form-label") }}
+            {{ form.first_name(class="form-control") }}
+            {% if form.first_name.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.first_name.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            {{ form.last_name.label(class="form-label") }}
+            {{ form.last_name(class="form-control") }}
+            {% if form.last_name.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.last_name.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            {{ form.middle_name.label(class="form-label") }}
+            {{ form.middle_name(class="form-control") }}
+            {% if form.middle_name.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.middle_name.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            {{ form.role_id.label(class="form-label") }}
+            {{ form.role_id(class="form-control") }}
+            {% if form.role_id.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.role_id.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Создать</button>
     </form>
 {% endblock %}

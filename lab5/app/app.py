@@ -9,6 +9,9 @@ from datetime import datetime
 from functools import wraps
 import logging
 
+from sqlalchemy import event
+from sqlalchemy.orm import sessionmaker
+
 app = Flask(__name__)
 app.debug = True  # <--- Добавьте эту строку
 logging.basicConfig(level=logging.DEBUG)  # Включаем логирование на уровне DEBUG
@@ -80,12 +83,14 @@ def user_detail(user_id):
 @login_required
 @check_rights(['admin'])
 def user_create():
-    form = UserForm() 
-    roles = Role.query.all() 
+    form = UserForm()
+    roles = Role.query.all()
+    # Заполняем choices в любом случае (и при GET, и при POST)
     form.role_id.choices = [(role.id, role.name) for role in roles]
 
     if form.validate_on_submit():
-        hashed_password = generate_password_hash(form.password.data, method='sha256')
+        logger.debug("Форма прошла валидацию.")
+        hashed_password = generate_password_hash(form.password.data, method='pbkdf2:sha256')
         new_user = User(
             login=form.login.data,
             password=hashed_password,
@@ -93,19 +98,27 @@ def user_create():
             last_name=form.last_name.data,
             middle_name=form.middle_name.data,
             role_id=form.role_id.data,
-            created_at=datetime.utcnow() 
+            created_at=datetime.utcnow()
         )
 
         try:
+            logger.debug(f"Попытка добавления пользователя: {new_user.login}")
             db.session.add(new_user)
+            logger.debug("Пользователь добавлен в сессию.")
             db.session.commit()
+            logger.debug("Сессия закоммичена.")
             flash('Пользователь успешно создан!', 'success')
             return redirect(url_for('index'))
         except Exception as e:
             db.session.rollback()
+            logger.error(f"Произошла ошибка при создании пользователя: {str(e)}")
             flash(f'Произошла ошибка при создании пользователя: {str(e)}', 'error')
-    return render_template('user_create.html', form=form, title="Создание пользователя")
-
+    else:
+        logger.debug("Форма не прошла валидацию.")
+        for field, errors in form.errors.items():
+            for error in errors:
+                logger.error(f"Ошибка в поле {field}: {error}")
+        return render_template('user_create.html', form=form, title="Создание пользователя")
 # Редактирование пользователя
 @app.route('/users/<int:user_id>/edit', methods=['GET', 'POST'])
 @login_required
@@ -159,7 +172,7 @@ def change_password():
     form = ChangePasswordForm()
     if form.validate_on_submit():
         if check_password_hash(current_user.password, form.old_password.data):
-            hashed_password = generate_password_hash(form.new_password.data, method='sha256')
+            hashed_password = generate_password_hash(form.new_password.data, method='pbkdf2:sha256')
             current_user.password = hashed_password
             try:
                 db.session.commit()
@@ -197,6 +210,11 @@ def logout():
     logout_user()
     flash('Вы вышли из системы.', 'info')
     return redirect(url_for('index'))
+
+
+@app.teardown_request
+def teardown_request(exception=None):
+    db.session.remove()
 
 if __name__ == '__main__':
     from flask import session
