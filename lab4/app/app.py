@@ -9,7 +9,6 @@ import os
 from datetime import datetime
 
 app = Flask(__name__)
-#application = app # Удалите эту строку!
 
 app.config['SECRET_KEY'] = os.urandom(24) 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://freedb_Artemka:%3F2uCVKXWV%24rk%26sd@sql.freedb.tech:3306/freedb_user_management'
