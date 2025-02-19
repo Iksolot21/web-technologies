@@ -12,7 +12,7 @@ app = Flask(__name__)
 #application = app # Удалите эту строку!
 
 app.config['SECRET_KEY'] = os.urandom(24) 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:16745678@localhost:3307/user_management'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://freedb_Artemka:%3F2uCVKXWV%24rk%26sd@sql.freedb.tech:3306/freedb_user_management'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
